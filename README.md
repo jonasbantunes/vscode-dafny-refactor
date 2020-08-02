@@ -1,6 +1,6 @@
-# dafny-refactor README
+# vscode-dafny-refactor README
 
-This is the README for your extension "dafny-refactor". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "vscode-dafny-refactor". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 

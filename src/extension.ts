@@ -1,27 +1,32 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { inlineTemp } from './inline-temp';
+import { Commands } from './constants';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export class CodeActionProvider implements vscode.CodeActionProvider {
+  provideCodeActions(): vscode.ProviderResult<
+    (vscode.Command | vscode.CodeAction)[]
+  > {
+    const codeActions: vscode.Command[] = [];
+    codeActions.push({
+      command: Commands.ApplyInlineTemp,
+      title: 'Apply Inline Temp',
+    });
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "dafny-refactor" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('dafny-refactor.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from DafnyRefactor!');
-	});
-
-	context.subscriptions.push(disposable);
+    return codeActions;
+  }
 }
 
-// this method is called when your extension is deactivated
+export function activate(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.commands.registerCommand(Commands.ApplyInlineTemp, inlineTemp)
+  );
+
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(
+      { pattern: '**/*.{dfy,dfyi}', scheme: 'file' },
+      new CodeActionProvider()
+    )
+  );
+}
+
 export function deactivate() {}
