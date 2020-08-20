@@ -49,6 +49,11 @@ export function inlineTemp() {
         const fullCommand = `${basePath}/${command}`;
 
         const process = spawn(fullCommand, args);
+        
+        process.stderr.on('data', (data) => {
+          vscode.window.showErrorMessage(`${data}`);
+          reject();
+        });
 
         process.on('exit', (code) => {
           if (code === 0) {
@@ -57,9 +62,6 @@ export function inlineTemp() {
             );
             resolve();
           } else {
-            vscode.window.showErrorMessage(
-              "Couldn't apply Inline Temp refactor"
-            );
             reject();
           }
         });
