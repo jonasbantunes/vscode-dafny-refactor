@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { inlineTemp } from './inline-temp';
-import { Commands } from './constants';
+import { inlineTemp } from './refactors/inline-temp';
 
 export class CodeActionProvider implements vscode.CodeActionProvider {
   provideCodeActions(): vscode.ProviderResult<
@@ -8,7 +7,7 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
   > {
     const codeActions: vscode.Command[] = [];
     codeActions.push({
-      command: Commands.ApplyInlineTemp,
+      command: 'vscode-dafny-refactor.applyInlineTemp',
       title: 'Apply Inline Temp',
     });
 
@@ -18,7 +17,10 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand(Commands.ApplyInlineTemp, inlineTemp)
+    vscode.commands.registerCommand(
+      'vscode-dafny-refactor.applyInlineTemp',
+      inlineTemp
+    )
   );
 
   context.subscriptions.push(
