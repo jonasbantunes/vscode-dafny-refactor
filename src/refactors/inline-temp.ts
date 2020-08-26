@@ -19,9 +19,6 @@ export function inlineTemp() {
           return;
         }
         const selection = editor.selection.active;
-
-        editor.document.save();
-
         const refactorType = 'apply-inline-temp';
         const filePath: string = editor.document.fileName;
         const line: number = selection.line + 1;
@@ -29,9 +26,14 @@ export function inlineTemp() {
 
         const args: string[] = [
           refactorType,
+          '--stdin',
+          '-f',
           filePath,
+          '-l',
           line.toString(),
+          '-c',
           column.toString(),
+          '--stdout',
         ];
 
         const basePath = vscode.workspace
@@ -48,14 +50,34 @@ export function inlineTemp() {
         const command = 'DafnyRefactor.exe';
         const fullCommand = `${basePath}/${command}`;
 
-        const process = spawn(fullCommand, args);
-        
-        process.stderr.on('data', (data) => {
+        const child = spawn(fullCommand, args);
+
+        child.stdin.write(editor.document.getText());
+        child.stdin.end();
+
+        child.stderr.on('data', (data) => {
           vscode.window.showErrorMessage(`${data}`);
           reject();
         });
 
-        process.on('exit', (code) => {
+        child.stdout.on('data', (data) => {
+          vscode.window.activeTextEditor?.edit((editBuilder) => {
+            const firstLine = editor.document.lineAt(0);
+            const lastLine = editor.document.lineAt(
+              editor.document.lineCount - 1
+            );
+            const textRange = new vscode.Range(
+              firstLine.range.start,
+              lastLine.range.end
+            );
+
+            var d = `${data}`;
+
+            editBuilder.replace(textRange, `${data}`);
+          });
+        });
+
+        child.on('exit', (code) => {
           if (code === 0) {
             vscode.window.showInformationMessage(
               'Inline Temp successfully applied '
@@ -66,7 +88,7 @@ export function inlineTemp() {
           }
         });
 
-        process.on('error', () => {
+        child.on('error', () => {
           vscode.window.showErrorMessage('Unknown error');
           reject();
         });
