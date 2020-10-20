@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
 
-export function inlineTemp() {
+export function extractVariable() {
   vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: 'Applying Inline Temp',
+      title: 'Applying Extract Variable',
       cancellable: false,
     },
     () => {
@@ -18,18 +18,21 @@ export function inlineTemp() {
           reject();
           return;
         }
-        const selection = editor.selection.active;
-        const refactorType = 'apply-inline-temp';
-        const line: number = selection.line + 1;
-        const column: number = selection.character + 1;
+
+        const refactorType = 'apply-extract-variable';
+        const startPos: string = `${editor.selection.start.line + 1}:${editor.selection.start.character + 1}`;
+        const endPos: string = `${editor.selection.end.line + 1}:${editor.selection.end.character + 1}`;
+        const varName: string = 'vsExtractedVar';
 
         const args: string[] = [
           refactorType,
           '--stdin',
-          '-l',
-          line.toString(),
-          '-c',
-          column.toString(),
+          '-s',
+          startPos,
+          '-e',
+          endPos,
+          '-v',
+          varName,
           '--stdout',
         ];
 
@@ -81,7 +84,7 @@ export function inlineTemp() {
         child.on('exit', (code) => {
           if (code === 0) {
             vscode.window.showInformationMessage(
-              'Inline Temp successfully applied '
+              'Extract Variable successfully applied '
             );
             resolve();
           } else {

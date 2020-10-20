@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { extractVariable } from './refactors/extract-variable';
 import { inlineTemp } from './refactors/inline-temp';
 
 export class CodeActionProvider implements vscode.CodeActionProvider {
@@ -9,7 +10,11 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
     codeActions.push({
       command: 'vscode-dafny-refactor.applyInlineTemp',
       title: 'Apply Inline Temp',
-    });
+    },
+      {
+        command: 'vscode-dafny-refactor.applyExtractVariable',
+        title: 'Apply Extract Variable',
+      });
 
     return codeActions;
   }
@@ -24,6 +29,13 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'vscode-dafny-refactor.applyExtractVariable',
+      extractVariable
+    )
+  );
+
+  context.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
       { pattern: '**/*.{dfy,dfyi}', scheme: 'file' },
       new CodeActionProvider()
@@ -31,4 +43,4 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-export function deactivate() {}
+export function deactivate() { }
