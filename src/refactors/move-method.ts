@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
 
-export function extractVariable() {
+export function moveMethod() {
   vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: 'Applying Extract Variable',
+      title: 'Applying Move Method',
       cancellable: false,
     },
     () => {
@@ -19,24 +19,16 @@ export function extractVariable() {
           return;
         }
 
-        const refactorType = 'apply-extract-variable';
-        const startPos: string = `${editor.selection.start.line + 1}:${
+        const refactorType = 'apply-move-method';
+        const paramPos: string = `${editor.selection.start.line + 1}:${
           editor.selection.start.character + 1
         }`;
-        const endPos: string = `${editor.selection.end.line + 1}:${
-          editor.selection.end.character + 1
-        }`;
-        const varName: string = 'vsExtractedVar';
 
         const args: string[] = [
           refactorType,
           '--stdin',
-          '-s',
-          startPos,
-          '-e',
-          endPos,
-          '-v',
-          varName,
+          '-i',
+          paramPos,
           '--stdout',
         ];
 
@@ -88,7 +80,7 @@ export function extractVariable() {
         child.on('exit', (code) => {
           if (code === 0) {
             vscode.window.showInformationMessage(
-              'Extract Variable successfully applied '
+              'Move Method successfully applied '
             );
             resolve();
           } else {
