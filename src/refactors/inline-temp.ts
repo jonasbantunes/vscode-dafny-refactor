@@ -22,14 +22,13 @@ export function inlineTemp() {
         const refactorType = 'apply-inline-temp';
         const line: number = selection.line + 1;
         const column: number = selection.character + 1;
+        const varPos: string = `${line}:${column}`;
 
         const args: string[] = [
           refactorType,
           '--stdin',
-          '-l',
-          line.toString(),
-          '-c',
-          column.toString(),
+          '-p',
+          varPos,
           '--stdout',
         ];
 
