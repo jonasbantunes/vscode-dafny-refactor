@@ -9,12 +9,18 @@ export function extractVariable() {
       cancellable: false,
     },
     () => {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         const editor = vscode.window.activeTextEditor;
         if (editor === undefined) {
           vscode.window.showErrorMessage(
             "Couldn't access currently active editor."
           );
+          reject();
+          return;
+        }
+
+        const varName = await vscode.window.showInputBox();
+        if (varName === undefined) {
           reject();
           return;
         }
@@ -26,7 +32,6 @@ export function extractVariable() {
         const endPos: string = `${editor.selection.end.line + 1}:${
           editor.selection.end.character + 1
         }`;
-        const varName: string = 'vsExtractedVar';
 
         const args: string[] = [
           refactorType,

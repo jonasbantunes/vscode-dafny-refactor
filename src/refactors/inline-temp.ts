@@ -18,10 +18,22 @@ export function inlineTemp() {
           reject();
           return;
         }
-        const selection = editor.selection.active;
+
+        const selectionText = editor.document.getText(editor.selection);
+        const inlineRe = /^\w+$/g;
+        const validInline = inlineRe.test(selectionText);
+        if (!validInline) {
+          vscode.window.showErrorMessage(
+            'Error: must select a single variable.'
+          );
+          reject();
+          return;
+        }
+
+        const selectionStart = editor.selection.start;
         const refactorType = 'apply-inline-temp';
-        const line: number = selection.line + 1;
-        const column: number = selection.character + 1;
+        const line: number = selectionStart.line + 1;
+        const column: number = selectionStart.character + 1;
         const varPos: string = `${line}:${column}`;
 
         const args: string[] = [
