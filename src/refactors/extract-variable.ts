@@ -9,7 +9,7 @@ export function extractVariable() {
       cancellable: false,
     },
     () => {
-      return new Promise(async (resolve, reject) => {
+      return new Promise<void>(async (resolve, reject) => {
         const editor = vscode.window.activeTextEditor;
         if (editor === undefined) {
           vscode.window.showErrorMessage(

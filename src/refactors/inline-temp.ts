@@ -9,7 +9,7 @@ export function inlineTemp() {
       cancellable: false,
     },
     () => {
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const editor = vscode.window.activeTextEditor;
         if (editor === undefined) {
           vscode.window.showErrorMessage(

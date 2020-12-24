@@ -15,7 +15,7 @@ export async function getMoveMethodParams() {
       cancellable: false,
     },
     () =>
-      new Promise((resolve, reject) => {
+      new Promise<void>((resolve, reject) => {
         const editor = vscode.window.activeTextEditor;
         if (editor === undefined) {
           vscode.window.showErrorMessage(
@@ -117,7 +117,7 @@ export async function moveMethod(paramPosition: string) {
       cancellable: false,
     },
     () => {
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const editor = vscode.window.activeTextEditor;
         if (editor === undefined) {
           vscode.window.showErrorMessage(
