@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { extractVariable } from './refactors/extract-variable';
 import { inlineTemp } from './refactors/inline-temp';
 import { getMoveMethodParams, moveMethod } from './refactors/move-method';
+import { getMoveToAssociatedParams } from './refactors/move-to-associated';
 
 export class CodeActionProvider implements vscode.CodeActionProvider {
   provideCodeActions(): vscode.ProviderResult<
@@ -31,6 +32,10 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
       command: 'vscode-dafny-refactor.applyMoveMethod',
       title: 'Apply Move Method',
     });
+    codeActions.push({
+      command: 'vscode-dafny-refactor.applyMoveMethodToAssociated',
+      title: 'Apply Move Method to Associated Class',
+    });
 
     return codeActions;
   }
@@ -55,6 +60,13 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       'vscode-dafny-refactor.applyMoveMethod',
       getMoveMethodParams
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'vscode-dafny-refactor.applyMoveMethodToAssociated',
+      getMoveToAssociatedParams
     )
   );
 
